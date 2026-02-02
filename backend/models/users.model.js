@@ -29,6 +29,9 @@ const userSchema = new mongoose.Schema({
     enum: ["admin", "user"],
     default: "user",
   },
+  token: {
+    type: String,
+  },
 });
 
 export const User = mongoose.model("User", userSchema);
