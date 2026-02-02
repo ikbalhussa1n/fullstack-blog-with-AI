@@ -1,6 +1,6 @@
 import { User } from "../models/users.model.js";
 import cloudinary from "../config/cloudinary.js";
-
+import bcrypt from "bcrypt";
 export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -30,10 +30,12 @@ export const register = async (req, res) => {
       stream.end(req.file.buffer);
     });
 
+    const encryptPass = await bcrypt.hash(password, 10);
+
     const newUser = await User.create({
       name,
       email,
-      password,
+      password: encryptPass,
       photo: {
         public_id: uploadResult.public_id,
         url: uploadResult.secure_url,
