@@ -14,16 +14,20 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  // photo: {
-  //   type: {
-  //     type: String,
-  //     required: true,
-  //   },
-  // },
+  photo: {
+    public_id: {
+      type: String,
+      required: true,
+    },
+    url: {
+      type: String,
+      required: true,
+    },
+  },
   role: {
     type: String,
     enum: ["admin", "user"],
-    default: "user", // 👈 everyone is user by default
+    default: "user",
   },
 });
 
