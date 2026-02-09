@@ -18,7 +18,7 @@ const connectDatabase = async () => {
 
     console.log("Database connection successful");
     app.listen(port, () => {
-      console.log(`Example app listening on port ${port}`);
+      console.log(`app listening on port ${port}`);
     });
   } catch (error) {
     console.log("Failed to connect Database", error);
