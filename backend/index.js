@@ -4,6 +4,7 @@ dotenv.config();
 import express from "express";
 import mongoose from "mongoose";
 import userRouter from "./routes/user.route.js";
+import blogRouter from "./routes/blog.route.js";
 
 const app = express();
 
@@ -29,3 +30,4 @@ const connectDatabase = async () => {
 connectDatabase();
 
 app.use("/user", userRouter);
+app.use("/blog", blogRouter);
