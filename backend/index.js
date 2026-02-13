@@ -5,10 +5,12 @@ import express from "express";
 import mongoose from "mongoose";
 import userRouter from "./routes/user.route.js";
 import blogRouter from "./routes/blog.route.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 
 const port = process.env.PORT || 3000;
 const MONGO_URL = process.env.MONGO_URI;
