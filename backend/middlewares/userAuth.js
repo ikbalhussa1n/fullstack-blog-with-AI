@@ -7,9 +7,7 @@ export const isUser = async (req, res, next) => {
     const token = req.cookies?.token;
 
     if (!token) {
-      return res
-        .status(401)
-        .json({ message: "User not authorized to create blog!" });
+      return res.status(401).json({ message: "User not Found!" });
     }
     const decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
     const userID = decode.userId;
@@ -17,11 +15,10 @@ export const isUser = async (req, res, next) => {
     const user = await User.findById(userID);
 
     if (!user) {
-      return res
-        .status(401)
-        .json({ message: "User not authorized to create blog!" });
+      return res.status(401).json({ message: "User not Found!" });
     }
 
+    req.user = user;
     next();
   } catch (error) {
     console.log(error);
@@ -30,8 +27,6 @@ export const isUser = async (req, res, next) => {
     } else if (error.name === "JsonWebTokenError") {
       return res.status(401).json({ message: "Invalid token" });
     }
-    return res
-      .status(401)
-      .json({ message: "User not authorized to create blog!" });
+    return res.status(401).json({ message: "User not Found!" });
   }
 };
