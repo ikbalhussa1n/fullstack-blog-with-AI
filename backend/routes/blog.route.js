@@ -6,6 +6,7 @@ import {
   findALlBlogs,
   getMyBlogs,
   singleBlog,
+  updateBlog,
 } from "../controller/blog.controller.js";
 
 import { isUser } from "../middlewares/userAuth.js";
@@ -17,5 +18,6 @@ router.delete("/delete/:id", isUser, deleteBlog);
 router.get("/all", isUser, findALlBlogs);
 router.get("/myBlogs", isUser, getMyBlogs);
 router.get("/singleBlog/:id", isUser, singleBlog);
+router.put("/update/:id", isUser, updateBlog);
 
 export default router;

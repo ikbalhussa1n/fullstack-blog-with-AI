@@ -117,3 +117,40 @@ export const singleBlog = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error!" });
   }
 };
+
+export const updateBlog = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const blog = await Blog.findById(id);
+
+    if (!blog) {
+      return res.status(404).json({ message: "Blog not found" });
+    }
+
+    // Authorization
+    if (
+      blog.author.toString() !== req.user._id.toString() &&
+      req.user.role !== "admin"
+    ) {
+      return res
+        .status(403)
+        .json({ message: "User not authorized to update blog" });
+    }
+
+    const updatedBlog = await Blog.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
+
+    // console.log(updatedBlog);
+    console.log("Request body:", req.body);
+
+    return res.status(200).json({
+      message: "Blog updated successfully",
+      blog: updatedBlog,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal server Error" });
+  }
+};
