@@ -9,6 +9,7 @@ export const createBlog = async (req, res) => {
     if (!category || !title) {
       return res.status(400).json({ message: "All fields are required!" });
     }
+
     if (!req.file) {
       return res.status(400).json({ message: "Blog image is required!" });
     }
@@ -26,7 +27,7 @@ export const createBlog = async (req, res) => {
     });
 
     const blog = await Blog.create({
-      //   author: req.user._id,
+      author: req.user._id,
       title,
       category,
       imageBlog: {
@@ -39,5 +40,80 @@ export const createBlog = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Fail to Submit post!" });
+  }
+};
+
+export const deleteBlog = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const blog = await Blog.findById(id);
+
+    if (!blog) {
+      return res.status(404).json({ message: "Blog post not available" });
+    }
+
+    if (
+      blog.author.toString() !== req.user._id.toString() &&
+      req.user.role !== "admin"
+    ) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    if (blog.imageBlog?.public_id) {
+      await cloudinary.uploader.destroy(blog.imageBlog.public_id);
+    }
+
+    await Blog.findByIdAndDelete(id);
+
+    return res.status(200).json({ message: "Blog deleted successfully" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error!" });
+  }
+};
+
+export const findALlBlogs = async (req, res) => {
+  // fetch all blogs
+  try {
+    const blogs = await Blog.find();
+    return res.status(200).json({
+      message: "Blogs fetched successfully",
+      blogs,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Failed to fetch blogs" });
+  }
+};
+
+export const getMyBlogs = async (req, res) => {
+  try {
+    const user = req.user_id;
+
+    const blogs = await Blog.find({ author: user });
+    console.log(blogs);
+    return res
+      .status(200)
+      .json({ message: "Blogs fetched successfully", blogs });
+  } catch (error) {
+    return res.status(500).json({ message: "Failed to fetch blogs" });
+  }
+};
+
+export const singleBlog = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const blog = await Blog.findById(id);
+
+    if (!blog) {
+      return res.status(200).json({ message: "Blog didn't exits!" });
+    }
+
+    return res.status(200).json({ message: "Blog fetched successfully", blog });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error!" });
   }
 };
