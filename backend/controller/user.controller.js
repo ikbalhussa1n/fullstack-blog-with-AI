@@ -107,3 +107,17 @@ export const logout = (req, res) => {
     res.status(500).json({ message: "Failed to logout!" });
   }
 };
+
+export const getMyProfile = async (req, res) => {
+  try {
+    const user = req.user;
+
+    if (!user) {
+      return res.status(401).json({ message: "User not available!" });
+    }
+    const { password, ...userWithoutPassword } = req.user._doc;
+    return res.status(200).json(userWithoutPassword);
+  } catch (error) {
+    return res.status(400).json({ message: "User not available!" });
+  }
+};
