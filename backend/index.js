@@ -6,11 +6,12 @@ import mongoose from "mongoose";
 import userRouter from "./routes/user.route.js";
 import blogRouter from "./routes/blog.route.js";
 import cookieParser from "cookie-parser";
-
+import cors from "cors";
 const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors());
 
 const port = process.env.PORT || 3000;
 const MONGO_URL = process.env.MONGO_URI;

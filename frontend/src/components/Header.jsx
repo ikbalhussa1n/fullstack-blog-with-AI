@@ -28,7 +28,10 @@ const Header = () => {
         >
           <MdDashboardCustomize size={25} />
         </a>
-        <button className="w-fit bg-green-600 text-white font-semibold text-sm sm:text-sm md:text-base px-2 sm:px-4 py-1 sm:py-2 rounded-full shadow hover:bg-green-700 transition-colors">
+        <button
+          className="w-fit bg-green-600 text-white font-semibold text-sm sm:text-sm md:text-base px-2 sm:px-4 py-1 sm:py-2 rounded-full shadow hover:bg-green-700 transition-colors"
+          onClick={() => navigate("/register")}
+        >
           Get Started
         </button>
       </div>
