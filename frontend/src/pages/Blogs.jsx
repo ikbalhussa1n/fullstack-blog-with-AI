@@ -1,7 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
+import { AuthContext } from "../context/AuthProvider";
 
 const Blogs = () => {
-  return <div>Blogs</div>;
+  const { blogs } = useContext(AuthContext);
+  console.log(blogs);
+  if (!blogs || blogs.length === 0) return <p>Loading blogs...</p>;
+
+  return <div></div>;
 };
 
 export default Blogs;
