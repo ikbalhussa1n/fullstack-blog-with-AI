@@ -12,9 +12,9 @@ const createTokenAndSaveCookie = async (userId, res) => {
 
   res.cookie("token", token, {
     httpOnly: true,
-    secure: true,
+    secure: false,
     maxAge: 60 * 60 * 1000,
-    sameSite: "Strict",
+    sameSite: "Lax",
   });
 
   await User.findByIdAndUpdate(userId, { token });
