@@ -4,9 +4,9 @@ import { Blog } from "../models/blogs.model.js";
 
 export const createBlog = async (req, res) => {
   try {
-    const { category, title } = req.body;
+    const { category, title, content } = req.body;
 
-    if (!category || !title) {
+    if (!category || !title || !content) {
       return res.status(400).json({ message: "All fields are required!" });
     }
 
@@ -30,6 +30,7 @@ export const createBlog = async (req, res) => {
       author: req.user._id,
       title,
       category,
+      content,
       imageBlog: {
         public_id: uploadResult.public_id,
         url: uploadResult.secure_url,
@@ -76,7 +77,7 @@ export const deleteBlog = async (req, res) => {
 export const findALlBlogs = async (req, res) => {
   // fetch all blogs
   try {
-    const blogs = await Blog.find();
+    const blogs = await Blog.find().populate("author", "name photo");
     return res.status(200).json({
       message: "Blogs fetched successfully",
       blogs,
@@ -89,9 +90,13 @@ export const findALlBlogs = async (req, res) => {
 
 export const getMyBlogs = async (req, res) => {
   try {
-    const user = req.user_id;
+    // Correctly get the user ID from the authenticated user object
+    const userId = req.user._id;
 
-    const blogs = await Blog.find({ author: user });
+    const blogs = await Blog.find({ author: userId }).populate(
+      "author",
+      "name photo",
+    );
     console.log(blogs);
     return res
       .status(200)

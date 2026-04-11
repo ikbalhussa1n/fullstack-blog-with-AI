@@ -40,14 +40,14 @@ export function AppSidebar() {
       <Sidebar variant="floating" className="pt-16">
         <SidebarHeader className="gap-3 pt-5">
           <button
-            className="w-full bg-green-600 text-white font-semibold py-2 px-4 rounded-2xl shadow-md
+            className="w-full bg-green-600 cursor-pointer text-white font-semibold py-2 px-4 rounded-2xl shadow-md
                      hover:bg-green-700 focus:outline-none focus:ring-2  transition-colors"
           >
             Write Blog
           </button>
 
           <button
-            className="w-full bg-gray-100 text-gray-800 font-semibold py-2 px-4 rounded-2xl shadow-sm
+            className="w-full bg-gray-100 text-gray-800  cursor-pointer font-semibold py-2 px-4 rounded-2xl shadow-sm
                      hover:bg-gray-200 focus:outline-none   transition-colors"
           >
             My Blogs
@@ -125,7 +125,10 @@ export function AppSidebar() {
             <SidebarMenuItem>
               <SidebarMenuButton>
                 <Mail />
-                <h6 onClick={() => handleNavAndSidebar("/contact-us")}>
+                <h6
+                  className="cursor-pointer font-medium"
+                  onClick={() => handleNavAndSidebar("/contact-us")}
+                >
                   Contact Us
                 </h6>
               </SidebarMenuButton>
@@ -133,8 +136,6 @@ export function AppSidebar() {
           </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
-      {/* )} */}
-      <Footer />
     </>
   );
 }

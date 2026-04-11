@@ -1,44 +1,74 @@
 import React from "react";
-import MainLayout from "./layouts/MainLayout";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import { Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-import Blogs from "./pages/Blogs";
-import ContactUs from "./pages/ContactUs";
-import Dashboard from "./pages/Dashboard";
+// Context
+import { AuthProvider } from "./context/AuthContext";
+
+// Components
+import Navbar from "./components/layout/Navbar";
+import Footer from "./components/layout/Footer";
+import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
+
+// Pages
+import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+import CreateBlog from "./pages/CreateBlog";
+import EditBlog from "./pages/EditBlog";
+import BlogDetail from "./pages/BlogDetail";
+import Profile from "./pages/Profile";
 import Error404 from "./pages/Error404";
-import Hero from "./Home/Hero";
-
-import AuthProvider from "./context/AuthProvider";
+import AdminDashboard from "./pages/AdminDashboard";
 
 const App = () => {
   return (
-    <div className="flex flex-col">
-      <Header />
+    <AuthProvider>
+      <Router>
+        <div className="min-h-screen flex flex-col font-sans antialiased text-foreground bg-background transition-colors duration-300">
+          <Navbar />
+          
+          <main className="flex-grow flex flex-col">
+            <Routes>
+              {/* Public Routes */}
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/blog/:id" element={<BlogDetail />} />
 
-      <main className="grow">
-        <AuthProvider>
-          <Routes>
-            {/* routes WITH sidebar */}
-            <Route element={<MainLayout />}>
-              <Route path="/" element={<Hero />} />
-              <Route path="/blogs" element={<Blogs />} />
-            </Route>
+              {/* Protected Routes */}
+              <Route element={<ProtectedRoute />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/create" element={<CreateBlog />} />
+                <Route path="/edit/:id" element={<EditBlog />} />
+                <Route path="/profile" element={<Profile />} />
+              </Route>
 
-            {/* routes WITHOUT sidebar */}
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/contact-us" element={<ContactUs />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="*" element={<Error404 />} />
-          </Routes>
-        </AuthProvider>
-      </main>
-      {/* <Footer /> */}
-    </div>
+              {/* Admin Routes */}
+              <Route element={<AdminRoute />}>
+                <Route path="/admin" element={<AdminDashboard />} />
+              </Route>
+
+              {/* 404 Catch-All */}
+              <Route path="*" element={<Error404 />} />
+            </Routes>
+          </main>
+
+          <Footer />
+          <ToastContainer 
+            position="bottom-right" 
+            theme="colored" 
+            autoClose={3000} 
+            toastClassName="rounded-xl shadow-lg font-medium tracking-tight"
+            hideProgressBar={false}
+            newestOnTop
+          />
+        </div>
+      </Router>
+    </AuthProvider>
   );
 };
 

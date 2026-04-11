@@ -1,22 +1,25 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@400;500;600&family=Fira+Code:wght@400;500&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
 
 /* Fonts for blog */
 :root {
-  --font-base: "Inter", sans-serif; /* Body text */
-  --font-heading: "Lexend", sans-serif; /* H1–H6 headings */
-  --font-mono: "Fira Code", monospace; /* Code blocks */
+  --font-base: "Lora", serif;
+  --font-heading: "Inter", sans-serif;
+  --font-mono: "Fira Code", monospace; /* Code */
 }
 
 /* Apply fonts */
 body {
   font-family: var(--font-base);
-  line-height: 1.6;
-  font-size: 1rem; /* 16px default */
-  color: #111; /* default text color */
+  line-height: 1.75;
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1,
@@ -28,12 +31,11 @@ h6 {
   font-family: var(--font-heading);
   font-weight: 700;
   line-height: 1.25;
-  color: #111;
 }
 
 h1 {
   font-size: 2rem;
-} /* large blog title */
+}
 h2 {
   font-size: 1.75rem;
 }
@@ -64,6 +66,26 @@ pre {
   padding: 0.2rem 0.4rem;
   border-radius: 4px;
   font-size: 0.95rem;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: oklch(0.7 0.01 56);
+  border-radius: 999px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: oklch(0.4 0.01 56);
+}
+
+/* Selection */
+::selection {
+  background: oklch(0.65 0.22 41 / 30%);
 }
 
 @theme inline {
