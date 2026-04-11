@@ -1,7 +1,7 @@
-import React, { createContext, useEffect, useState } from "react";
 import axios from "axios";
+import { createContext, useEffect, useState } from "react";
 
-export const AuthContext = createContext(null);
+export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
   const [blogs, setBlogs] = useState([]);
@@ -9,10 +9,13 @@ const AuthProvider = ({ children }) => {
   useEffect(() => {
     const getBlogs = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/blog/all");
-        setBlogs(response.data);
+        const response = await axios.get("http://localhost:3000/blog/all", {
+          withCredentials: true,
+        });
+        console.log(response.data.blogs);
+        setBlogs(response.data.blogs);
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching blogs:", error);
       }
     };
 
