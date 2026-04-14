@@ -11,19 +11,15 @@
   "author": "Ikbalhussa1n",
   "license": "ISC",
   "dependencies": {
-    "@popperjs/core": "^2.11.8",
     "bcrypt": "^6.0.0",
-    "bootstrap": "^5.3.8",
     "cloudinary": "^2.9.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
-    "i": "^0.3.7",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.1.5",
     "multer": "^2.0.2",
-    "nodemon": "^3.1.11",
-    "npm": "^11.10.0"
+    "nodemon": "^3.1.11"
   }
 }

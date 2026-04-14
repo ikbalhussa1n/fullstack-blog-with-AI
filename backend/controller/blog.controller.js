@@ -1,4 +1,3 @@
-import { User } from "../models/users.model.js";
 import cloudinary from "../config/cloudinary.js";
 import { Blog } from "../models/blogs.model.js";
 
