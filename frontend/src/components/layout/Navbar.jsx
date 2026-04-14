@@ -1,21 +1,21 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import useDarkMode from "../../hooks/useDarkMode";
-import { LogOut, User, PenSquare, Home, Menu, X, Sun, Moon, LayoutDashboard, ShieldAlert } from "lucide-react";
+import { LogOut, User, Sun, Moon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { SidebarTrigger } from "../ui/sidebar";
 
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { isDark, toggle: toggleDarkMode } = useDarkMode();
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef(null);
 
   const handleLogout = async () => {
     setProfileOpen(false);
-    setMobileOpen(false);
     await logout();
     navigate("/");
   };
@@ -31,34 +31,41 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const closeMobile = () => setMobileOpen(false);
-
-  const NavLink = ({ to, children, onClick, className = "" }) => (
-    <Link
-      to={to}
-      onClick={() => { closeMobile(); onClick?.(); }}
-      className={`text-sm font-medium transition-colors hover:text-primary flex items-center gap-1.5 ${className}`}
-    >
-      {children}
-    </Link>
-  );
+  // Simple Breadcrumb logic based on pathname
+  const getPageTitle = () => {
+    const path = location.pathname;
+    if (path === "/") return "Home";
+    if (path.startsWith("/dashboard")) return "Dashboard";
+    if (path.startsWith("/create")) return "Write Blog";
+    if (path.startsWith("/profile")) return "Your Profile";
+    if (path.startsWith("/admin")) return "Administration";
+    if (path.startsWith("/blog/")) return "Reading";
+    return "";
+  };
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 shadow-sm">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        {/* Logo */}
-        <Link to="/" className="flex items-center space-x-2 shrink-0" onClick={closeMobile}>
-          <span className="text-2xl font-extrabold bg-gradient-to-r from-chart-1 via-primary to-chart-5 bg-clip-text text-transparent tracking-tight">
-            AI Blog
-          </span>
-        </Link>
+    <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 shadow-sm flex-none transition-all duration-300">
+      <div className="flex h-16 items-center px-4 md:px-6 w-full">
+        <div className="flex items-center gap-4">
+          {/* Sidebar Trigger (Left) */}
+          <SidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors" />
 
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-6">
+          {/* Dynamic Page Title / Breadcrumb */}
+          <div className="hidden sm:flex items-center">
+            <span className="text-sm font-semibold text-muted-foreground select-none">
+              {getPageTitle()}
+            </span>
+          </div>
+        </div>
+        
+        <div className="flex-1" />
+
+        {/* Right side actions */}
+        <div className="flex items-center space-x-4">
           {/* Dark mode */}
           <button
             onClick={toggleDarkMode}
-            className="p-2 rounded-full hover:bg-muted transition-colors"
+            className="p-2 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors focus:outline-none"
             title="Toggle Dark Mode"
             id="dark-mode-toggle"
           >
@@ -75,170 +82,68 @@ const Navbar = () => {
             </AnimatePresence>
           </button>
 
-          <NavLink to="/"><Home className="w-4 h-4" /> Home</NavLink>
-
           {isAuthenticated ? (
-            <>
-              {user?.role === "admin" && (
-                <NavLink to="/admin" className="text-destructive font-semibold">
-                  <ShieldAlert className="w-4 h-4" /> Admin
-                </NavLink>
-              )}
-              <NavLink to="/dashboard"><LayoutDashboard className="w-4 h-4" /> Dashboard</NavLink>
-              <NavLink
-                to="/create"
-                className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 hover:text-primary-foreground shadow-sm"
+            <div className="relative" ref={profileRef}>
+              <button
+                onClick={() => setProfileOpen(!profileOpen)}
+                className="flex items-center space-x-2 cursor-pointer focus:outline-none rounded-full ring-offset-background transition-all focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                id="profile-dropdown-trigger"
               >
-                <PenSquare className="w-4 h-4" /> Write
-              </NavLink>
+                <img
+                  src={user?.photo?.url || "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"}
+                  alt="Avatar"
+                  className="w-9 h-9 rounded-full border-2 border-border object-cover hover:border-primary transition-colors shadow-sm"
+                />
+              </button>
 
-              {/* Profile Dropdown */}
-              <div className="relative ml-2" ref={profileRef}>
-                <button
-                  onClick={() => setProfileOpen(!profileOpen)}
-                  className="flex items-center space-x-2 cursor-pointer focus:outline-none"
-                  id="profile-dropdown-trigger"
-                >
-                  <img
-                    src={user?.photo?.url || "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"}
-                    alt="Avatar"
-                    className="w-9 h-9 rounded-full border-2 border-border object-cover hover:border-primary transition-colors"
-                  />
-                </button>
-
-                <AnimatePresence>
-                  {profileOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 8, scale: 0.96 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute right-0 mt-3 w-56 rounded-xl shadow-xl py-2 bg-popover text-popover-foreground ring-1 ring-border z-50 overflow-hidden"
-                    >
-                      <div className="px-4 py-3 border-b border-border">
-                        <p className="text-sm font-semibold truncate">{user?.name}</p>
-                        <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
-                      </div>
+              <AnimatePresence>
+                {profileOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 mt-3 w-56 rounded-xl shadow-xl py-2 bg-popover text-popover-foreground ring-1 ring-border/50 z-50 overflow-hidden"
+                  >
+                    <div className="px-4 py-3 border-b border-border/50 bg-muted/20">
+                      <p className="text-sm font-semibold truncate leading-none mb-1.5">{user?.name}</p>
+                      <p className="text-xs text-muted-foreground truncate leading-none">{user?.email}</p>
+                    </div>
+                    <div className="p-1">
                       <Link
                         to="/profile"
                         onClick={() => setProfileOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2.5 text-sm hover:bg-muted/60 transition-colors"
+                        className="flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-muted/80 transition-colors"
                       >
-                        <User className="w-4 h-4" /> Profile
+                        <User className="w-4 h-4 opacity-70" /> Profile
                       </Link>
                       <button
                         onClick={handleLogout}
-                        className="w-full text-left flex items-center gap-2 px-4 py-2.5 text-sm text-destructive hover:bg-destructive/10 transition-colors"
+                        className="w-full text-left flex items-center gap-2 px-3 py-2 text-sm rounded-md text-destructive hover:bg-destructive/10 transition-colors mt-1"
                       >
-                        <LogOut className="w-4 h-4" /> Sign out
+                        <LogOut className="w-4 h-4 opacity-70" /> Sign out
                       </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           ) : (
-            <>
-              <NavLink to="/login">Sign In</NavLink>
-              <NavLink
+            <div className="hidden md:flex items-center space-x-3">
+              <Link to="/login" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors px-3 py-2">
+                Sign In
+              </Link>
+              <Link
                 to="/register"
-                className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 hover:text-primary-foreground shadow-sm"
+                className="bg-primary text-primary-foreground text-sm font-medium px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors shadow-sm"
               >
                 Sign Up
-              </NavLink>
-            </>
+              </Link>
+            </div>
           )}
         </div>
-
-        {/* Mobile menu button */}
-        <div className="flex md:hidden items-center gap-3">
-          <button
-            onClick={toggleDarkMode}
-            className="p-2 rounded-full hover:bg-muted transition-colors"
-          >
-            {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-          </button>
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="p-2 rounded-lg hover:bg-muted transition-colors"
-            id="mobile-menu-toggle"
-          >
-            {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
       </div>
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="md:hidden overflow-hidden border-t border-border bg-background"
-          >
-            <div className="flex flex-col px-4 py-4 space-y-1">
-              <NavLink to="/" className="py-3 px-3 rounded-lg hover:bg-muted">
-                <Home className="w-4 h-4" /> Home
-              </NavLink>
-
-              {isAuthenticated ? (
-                <>
-                  {user?.role === "admin" && (
-                    <NavLink to="/admin" className="py-3 px-3 rounded-lg hover:bg-muted text-destructive font-semibold">
-                      <ShieldAlert className="w-4 h-4" /> Admin
-                    </NavLink>
-                  )}
-                  <NavLink to="/dashboard" className="py-3 px-3 rounded-lg hover:bg-muted">
-                    <LayoutDashboard className="w-4 h-4" /> Dashboard
-                  </NavLink>
-                  <NavLink to="/create" className="py-3 px-3 rounded-lg hover:bg-muted">
-                    <PenSquare className="w-4 h-4" /> Write
-                  </NavLink>
-                  <NavLink to="/profile" className="py-3 px-3 rounded-lg hover:bg-muted">
-                    <User className="w-4 h-4" /> Profile
-                  </NavLink>
-
-                  <div className="pt-2 border-t border-border">
-                    <div className="flex items-center gap-3 px-3 py-2 mb-2">
-                      <img
-                        src={user?.photo?.url || "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"}
-                        alt="Avatar"
-                        className="w-10 h-10 rounded-full border border-border object-cover"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{user?.name}</p>
-                        <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
-                      </div>
-                    </div>
-                    <button
-                      onClick={handleLogout}
-                      className="w-full flex items-center gap-2 px-3 py-3 text-sm text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
-                    >
-                      <LogOut className="w-4 h-4" /> Sign out
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <NavLink to="/login" className="py-3 px-3 rounded-lg hover:bg-muted">
-                    Sign In
-                  </NavLink>
-                  <Link
-                    to="/register"
-                    onClick={closeMobile}
-                    className="mt-2 text-center text-sm font-medium bg-primary text-primary-foreground px-4 py-3 rounded-lg hover:bg-primary/90 transition-colors shadow-sm"
-                  >
-                    Sign Up
-                  </Link>
-                </>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </nav>
+    </header>
   );
 };
 

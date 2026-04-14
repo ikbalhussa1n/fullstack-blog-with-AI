@@ -38,7 +38,7 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
-  const { isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -84,61 +84,81 @@ const Home = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 md:py-28 border-b">
-        {/* Background effects */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-chart-1/10 via-background to-background" />
-        <div className="absolute top-20 left-1/4 w-72 h-72 bg-chart-1/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-chart-5/5 rounded-full blur-3xl" />
-
-        <div className="container mx-auto px-4 relative z-10 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 text-sm font-medium text-chart-1 bg-chart-1/10 px-4 py-1.5 rounded-full mb-6"
-          >
-            <Sparkles className="w-4 h-4" /> AI-Powered Blogging Platform
-          </motion.div>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-black mb-5 tracking-tight max-w-4xl mx-auto leading-[1.1]"
-          >
-            Write Smarter with{" "}
-            <span className="bg-gradient-to-r from-chart-1 via-chart-5 to-chart-4 bg-clip-text text-transparent">
-              AI-Powered
-            </span>{" "}
-            Insights
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-            className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed"
-          >
-            Discover, create, and share insightful articles. Leverage AI to generate
-            drafts, refine ideas, and publish faster than ever.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-3"
-          >
-            {isAuthenticated ? (
+      {/* Logged-in: Clean dashboard header | Logged-out: Full marketing hero */}
+      {isAuthenticated ? (
+        <section className="py-8 border-b border-border/50">
+          <div className="container mx-auto px-4">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35 }}
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+            >
+              <div>
+                <h1 className="text-2xl font-bold tracking-tight text-foreground">
+                  Welcome back{user?.name ? `, ${user.name}` : ""}
+                </h1>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Here's what's new across the community.
+                </p>
+              </div>
               <Link
                 to="/create"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-xl hover:bg-primary/90 transition-all shadow-sm text-sm"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-semibold rounded-xl hover:bg-primary/90 transition-all shadow-sm text-sm shrink-0"
               >
-                <PenSquare className="w-4 h-4" /> Start Writing
+                <PenSquare className="w-4 h-4" /> New Post
               </Link>
-            ) : (
-              <>
+            </motion.div>
+          </div>
+        </section>
+      ) : (
+        <>
+          {/* Hero Section — shown only to guests */}
+          <section className="relative overflow-hidden py-20 md:py-28 border-b">
+            {/* Background effects */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-chart-1/10 via-background to-background" />
+            <div className="absolute top-20 left-1/4 w-72 h-72 bg-chart-1/5 rounded-full blur-3xl" />
+            <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-chart-5/5 rounded-full blur-3xl" />
+
+            <div className="container mx-auto px-4 relative z-10 text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="inline-flex items-center gap-2 text-sm font-medium text-chart-1 bg-chart-1/10 px-4 py-1.5 rounded-full mb-6"
+              >
+                <Sparkles className="w-4 h-4" /> AI-Powered Blogging Platform
+              </motion.div>
+
+              <motion.h1
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                className="text-4xl md:text-5xl lg:text-6xl font-black mb-5 tracking-tight max-w-4xl mx-auto leading-[1.1]"
+              >
+                Write Smarter with{" "}
+                <span className="bg-gradient-to-r from-chart-1 via-chart-5 to-chart-4 bg-clip-text text-transparent">
+                  AI-Powered
+                </span>{" "}
+                Insights
+              </motion.h1>
+
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3, duration: 0.5 }}
+                className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8 leading-relaxed"
+              >
+                Discover, create, and share insightful articles. Leverage AI to generate
+                drafts, refine ideas, and publish faster than ever.
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.5 }}
+                className="flex flex-col sm:flex-row items-center justify-center gap-3"
+              >
                 <a
                   href="#latest-posts"
                   className="inline-flex items-center gap-2 px-6 py-3 bg-secondary text-secondary-foreground font-semibold rounded-xl hover:bg-secondary/80 transition-all shadow-sm text-sm"
@@ -151,41 +171,41 @@ const Home = () => {
                 >
                   Login to create your own blog <ArrowRight className="w-4 h-4" />
                 </Link>
-              </>
-            )}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="bg-muted/30 py-20 border-b">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold tracking-tight mb-4 text-foreground">Everything you need to succeed</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">Our platform equips you with state-of-the-art tools to write, monitor, and scale your personal blogs professionally.</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {FEATURES.map((feature, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1, duration: 0.5 }}
-                className="bg-background rounded-2xl p-6 border border-border shadow-sm hover:shadow-md transition-shadow"
-              >
-                <div className="bg-muted w-14 h-14 rounded-xl flex items-center justify-center mb-5">
-                  {feature.icon}
-                </div>
-                <h3 className="text-lg font-bold mb-2 text-foreground">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
               </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </div>
+          </section>
 
-      {/* Blog Feed Section */}
+          {/* Features Section — shown only to guests */}
+          <section className="bg-muted/30 py-20 border-b">
+            <div className="container mx-auto px-4">
+              <div className="text-center mb-16">
+                <h2 className="text-3xl font-bold tracking-tight mb-4 text-foreground">Everything you need to succeed</h2>
+                <p className="text-muted-foreground max-w-2xl mx-auto">Our platform equips you with state-of-the-art tools to write, monitor, and scale your personal blogs professionally.</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {FEATURES.map((feature, idx) => (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: idx * 0.1, duration: 0.5 }}
+                    className="bg-background rounded-2xl p-6 border border-border shadow-sm hover:shadow-md transition-shadow"
+                  >
+                    <div className="bg-muted w-14 h-14 rounded-xl flex items-center justify-center mb-5">
+                      {feature.icon}
+                    </div>
+                    <h3 className="text-lg font-bold mb-2 text-foreground">{feature.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{feature.description}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </section>
+        </>
+      )}
+
+      {/* Blog Feed Section — always shown */}
       <section id="latest-posts" className="container mx-auto px-4 py-14">
         {/* Search + Filters */}
         <div className="mb-10 space-y-5">
