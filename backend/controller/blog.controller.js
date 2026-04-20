@@ -112,7 +112,7 @@ export const singleBlog = async (req, res) => {
     const blog = await Blog.findById(id);
 
     if (!blog) {
-      return res.status(200).json({ message: "Blog didn't exits!" });
+      return res.status(404).json({ message: "Blog didn't exits!" });
     }
 
     return res.status(200).json({ message: "Blog fetched successfully", blog });
